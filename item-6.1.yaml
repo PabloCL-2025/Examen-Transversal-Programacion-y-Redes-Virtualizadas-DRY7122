@@ -1,0 +1,27 @@
+---
+- name: Configurar IPv6 en Loopback33
+  hosts: CSR1kv
+  gather_facts: false
+  connection: local
+ 
+ ######################Configurar Loopback 33#####################
+  tasks:
+   - name: Configurar IPv6
+     ios_config:
+       parents: "interface Loopback33"
+       lines:
+         - ipv6 address 3001:ABCD:ABCD:1::1/128
+         - ipv6 address FE80::1 link-local
+
+
+  #######################Guardar Salida de Show Running##########################
+   - name: Ejecutar show running-config
+     ios_command:
+       commands:
+         - show running-config
+     register: salida
+
+   - name: Guardar salida en archivo
+     copy:
+       content: "{{ salida.stdout[0] }}"
+       dest: "./respaldo_{{ inventory_hostname }}.txt"
