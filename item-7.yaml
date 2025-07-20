@@ -1,0 +1,72 @@
+---
+- name: AUTOMATIC CONFIGURATION OF EIGRP
+  hosts: CSR1kv
+  gather_facts: false
+  connection: local
+ 
+ ######################EIGRP CONFIGURATION#####################
+  tasks:
+   - name: Create Router EIGRP 100 and Passive Interface / IPV4
+     ios_config:
+       parents: "router eigrp 100"
+       lines:
+         - passive-interface gigabitEthernet 1
+
+
+   - name: Create Router EIGRP 100 and Passive Interface / IPV6
+     ios_command:
+       commands:
+         - conf t
+         - ipv6 unicast-routing
+         - ipv6 router eigrp 100
+         - passive-interface gigabitEthernet 1
+
+  #######################SHOW RUNNING##########################
+
+   - name: Task for Save "Show Running Config | section eigrp"
+     ios_command:
+       commands:
+         - show running-config | section eigrp
+     register: show_eigrp
+
+
+   - name: Task for Save "Show ip interface brief"
+     ios_command:
+       commands:
+         - show ip interface brief
+     register: show_brief
+   
+   - name: Task for Save "Show running config"
+     ios_command:
+       commands:
+         - show running-config
+     register: show_run
+
+   - name: Task for Save "Show Running Config | section eigrp"
+     ios_command:
+       commands:
+         - show version
+     register: show_version
+
+  ###################SAVE SHOW RUNNING TO .txt####################
+     
+ 
+   - name: SAVE OUTPUT "SHOW EIGRP"
+     copy:
+       content: "{{ show_eigrp.stdout[0] }}"
+       dest: "./show_run_eigrp_{{ inventory_hostname }}.txt"
+
+   - name: SAVE OUTPUT "SHOW BRIEF"
+     copy:
+       content: "{{ show_brief.stdout[0] }}"
+       dest: "./show_run_brief_{{ inventory_hostname }}.txt"
+
+   - name: SAVE OUTPUT "SHOW RUNNING-CONFIG"
+     copy:
+       content: "{{ show_run.stdout[0] }}"
+       dest: "./show_running_config_{{ inventory_hostname }}.txt"
+
+   - name: SAVE OUTPUT "SHOW VERSION"
+     copy:
+       content: "{{ show_version.stdout[0] }}"
+       dest: "./show_run_version_{{ inventory_hostname }}.txt"
