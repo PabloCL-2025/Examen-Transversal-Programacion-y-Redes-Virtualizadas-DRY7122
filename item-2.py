@@ -130,7 +130,7 @@ def main():
             while True:
                 continuar = input("\n¿Continuar? (Enter) o 's' para salir: ").lower()
                 if continuar == 's':
-                    print("\n¡Hasta luego! 👋")
+                    print("\n¡Hasta luego!")
                     return
                 elif continuar == '':
                     break
@@ -138,7 +138,7 @@ def main():
                     print("Presione Enter para continuar o 's' para salir.")
                     
         except KeyboardInterrupt:
-            print("\n\n¡Hasta luego! 👋")
+            print("\n\n¡Hasta luego!")
             return
         except Exception as e:
             print(f"Error: {e}")
